@@ -1,0 +1,11 @@
+close all;
+clear all;
+clc;
+ 
+img=imread('C:\Users\dijunyu\Desktop\实验一\lena.bmp');
+imgn=imread('C:\Users\dijunyu\Desktop\实验一\lena512.bmp');
+[h,w]=size(img);
+MAX=2^8-1;          %图像的灰度级
+MSE=sum(sum((img-imgn).^2))/(h*w);     %均方差
+PSNR=20*log10(MAX/sqrt(MSE));           %峰值信噪比
+disp(PSNR);
