@@ -1,0 +1,37 @@
+clear all;
+clc;
+picpath = ('C:\Users\didi\Desktop\实验一\LSB_watermarked.bmp');
+watermark_bits = input('请输入提取的水印比特数:');
+i = imread(picpath);                                   % 读取含有水印信息的彩色图像
+i1 = i(:,:,1);
+key = zeros(watermark_bits,1);                         % 创建一个watermark_bits行1列的全0矩阵，用于存放水印比特
+[row,col] = size(i1);   
+key_counter = 1;
+round = 0;
+round_counter = 0;
+total_watermark_bits = 0;
+if mod(watermark_bits,row) == 0
+    round = floor(watermark_bits/row);
+else
+    round = floor(watermark_bits/row) + 1;
+end
+for ii = 1:1:round
+    for jj = 1:1:row
+        key(key_counter,1) = bitget(i1(jj,ii),1);  % 提取图像矩阵的bit水印信息
+        key_counter = key_counter + 1;
+        total_watermark_bits = total_watermark_bits + 1;
+        if key_counter > watermark_bits
+            break;
+        end 
+    end %内层for
+    round_counter = round_counter + 1;
+    disp(['当前提取轮数: ',num2str(round_counter)]);
+    if key_counter > watermark_bits
+        disp(['LSB水印提取正常结束!共提取水印比特数:',num2str(total_watermark_bits),' bits']);
+        break;
+    end
+end %外层for
+ 
+fobject = fopen('C:\Users\didi\Desktop\实验一\LSB_watermark.txt','w');       % 以只写模式打开一个名为mark_message.txt的文件,不存在则创建之
+fwrite(fobject,key,'bit1');               % 将key矩阵中的数作为bit写入文件句柄为fobject的文件
+fclose(fobject);                          % 关闭文件句柄所对应的文件
