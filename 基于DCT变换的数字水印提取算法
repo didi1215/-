@@ -1,0 +1,26 @@
+after_2=blkproc(after,[8,8],'dct2');   %此步开始提取水印，将灰度层分块进行DCT变换
+p=zeros(1,8);        %初始化提取数值用的矩阵
+mark_2 = zeros(row,column);
+for i=1:row
+    for j=1:column
+        x=(i-1)*8;y=(j-1)*8;
+        p(1)=after_2(x+1,y+8);         %将之前改变过数值的点的数值提取出来
+        p(2)=after_2(x+2,y+7);
+        p(3)=after_2(x+3,y+6);
+        p(4)=after_2(x+4,y+5);
+        p(5)=after_2(x+5,y+4);
+        p(6)=after_2(x+6,y+3);
+        p(7)=after_2(x+7,y+2);
+        p(8)=after_2(x+8,y+1);
+        if corr2(p,k1)>corr2(p,k2)  %corr2计算两个矩阵的相似度，越接近1相似度越大
+            mark_2(i,j)=1;              %比较提取出来的数值与随机频率k1和k2的相似度，还原水印图样
+        else
+            mark_2(i,j)=0;
+        end
+    end
+end
+subplot(2,3,5);
+mark_2 = uint8(mark_2);
+imshow(mark_2,[]),title('提取出的水印');
+subplot(2,3,6);
+imshow(mark),title('原嵌入水印');
