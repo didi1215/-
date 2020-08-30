@@ -1,0 +1,31 @@
+C=imread('C:/Users/dijunyu/Desktop/实验一/lena.bmp');%读取图像并存放到C中
+C_M=C;
+fileID=fopen('C:\Users\dijunyu\Desktop\实验一\markresule.bmp','r');%打开文件
+[M,L]=fread(fileID,'ubit1');%读取文件的内容，并以二进制方式存放到向量M中
+ 
+%将二进制的秘密消息M嵌入到载密图像的LSB面
+[m,n]=size(C);
+p=1;%嵌入计数器
+for i=1:m
+ for j=1:n
+    C_M(i,j)=C(i,j)-mod(C(i,j),2)+M(p,1);%嵌入方法是先将LSB置零，然后加上秘密消息中的对应的0或1
+    if L==p   %嵌入终止条件：当嵌入的个数为秘密消息的长度时，跳出循环，不再嵌入
+        break;
+    end
+    p=p+1;
+end
+if L==p    %嵌入终止条件：当嵌入的个数为秘密消息的长度时，跳出循环，不再嵌入
+    break;
+end
+end
+ 
+%查看嵌入信息情况：将载密图像减去载体图像
+for i=1:m
+    for j=1:n
+       C_C(i,j)=C_M(i,j)-C(i,j);
+   end
+end
+ 
+%画图展示
+subplot(1,2,1);imshow(C_M);title('载密图像','FontSize',20);
+subplot(1,2,2);imshow(mat2gray(C_C));title('LSB平面分布情况图','fontsize',20);
